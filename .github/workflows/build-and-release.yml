@@ -85,7 +85,9 @@ jobs:
         FORGE_SIZE=$(stat -c%s "forge/build/libs/$FORGE_JAR")
         NEOFORGE_SIZE=$(stat -c%s "neoforge/build/libs/$NEOFORGE_JAR")
         TOTAL_SIZE=$((FORGE_SIZE + NEOFORGE_SIZE))
+        TOTAL_KB=$((TOTAL_SIZE / 1024))
         echo "file_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
+        echo "file_size_kb=$TOTAL_KB" >> $GITHUB_OUTPUT
         
     - name: Determine release tag
       id: release_tag
@@ -164,7 +166,7 @@ jobs:
           
           ---
           
-          **File Info**: `${{ steps.build_info.outputs.forge_jar }}` + `${{ steps.build_info.outputs.neoforge_jar }}` ($((${{ steps.build_info.outputs.file_size }} / 1024)) KB total)
+          **File Info**: `${{ steps.build_info.outputs.forge_jar }}` + `${{ steps.build_info.outputs.neoforge_jar }}` (${{ steps.build_info.outputs.file_size_kb }} KB total)
           
           **Build**: GitHub Actions #${{ github.run_number }} | **Commit**: ${{ github.sha }}
         files: |
