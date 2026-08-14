@@ -1,12 +1,11 @@
-package com.targren.forgeautoshutdown;
+package com.mixiaoai.autoshutdown;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import org.apache.logging.log4j.Logger;
 
 /**
- * Static container class for mod's configuration values. Handles saving and loading.
+ * Builds the Forge config spec and binds its values to the common Config holders.
  */
-class Config
+class ForgeConfig
 {
     private static final String SCHEDULE = "Schedule";
     private static final String VOTING = "Voting";
@@ -108,36 +107,40 @@ class Config
         SPEC = builder.build();
     }
 
-    /**
-     * Checks the loaded configuration and makes adjustments based on other config
-     */
-    static void validate()
+    /** Binds the spec values to the common Config holders */
+    static void init()
     {
-        Logger logger = ForgeAutoShutdown.LOGGER;
+        Config.scheduleEnabled.bind(scheduleEnabled, scheduleEnabled::set);
+        Config.scheduleWarning.bind(scheduleWarning, scheduleWarning::set);
+        Config.scheduleDelay.bind(scheduleDelay, scheduleDelay::set);
+        Config.scheduleUptime.bind(scheduleUptime, scheduleUptime::set);
+        Config.scheduleHour.bind(scheduleHour, scheduleHour::set);
+        Config.scheduleMinute.bind(scheduleMinute, scheduleMinute::set);
+        Config.scheduleDelayBy.bind(scheduleDelayBy, scheduleDelayBy::set);
 
-        int hour = scheduleHour.get();
-        int minute = scheduleMinute.get();
+        Config.voteEnabled.bind(voteEnabled, voteEnabled::set);
+        Config.voteInterval.bind(voteInterval, voteInterval::set);
+        Config.minVoters.bind(minVoters, minVoters::set);
+        Config.maxNoVotes.bind(maxNoVotes, maxNoVotes::set);
 
-        if (!scheduleUptime.get() && hour >= 24)
-        {
-            logger.warn("Uptime shutdown is disabled, but the shutdown hour is more " +
-                "than 23! Please fix this in the config. It will be set to 00 hours.");
-            scheduleHour.set(0);
-        }
+        Config.watchdogEnabled.bind(watchdogEnabled, watchdogEnabled::set);
+        Config.attemptSoftKill.bind(attemptSoftKill, attemptSoftKill::set);
+        Config.watchdogInterval.bind(watchdogInterval, watchdogInterval::set);
+        Config.maxTickTimeout.bind(maxTickTimeout, maxTickTimeout::set);
+        Config.lowTPSThreshold.bind(lowTPSThreshold, lowTPSThreshold::set);
+        Config.lowTPSTimeout.bind(lowTPSTimeout, lowTPSTimeout::set);
 
-        if (scheduleUptime.get() && hour == 0 && minute == 0)
-        {
-            logger.warn("Uptime shutdown is enabled, but is set to shutdown after " +
-                "0 hours and 0 minutes of uptime! Please fix this in the config. " +
-                "It will be set to 24 hours.");
-            scheduleHour.set(24);
-        }
+        Config.idleShutdownEnabled.bind(idleShutdownEnabled, idleShutdownEnabled::set);
+        Config.idleCheckStartHour.bind(idleCheckStartHour, idleCheckStartHour::set);
+        Config.idleCheckStartMinute.bind(idleCheckStartMinute, idleCheckStartMinute::set);
+        Config.idleCheckEndHour.bind(idleCheckEndHour, idleCheckEndHour::set);
+        Config.idleCheckEndMinute.bind(idleCheckEndMinute, idleCheckEndMinute::set);
+        Config.idleTimeout.bind(idleTimeout, idleTimeout::set);
+        Config.idleCheckInterval.bind(idleCheckInterval, idleCheckInterval::set);
+
+        Config.msgWarn.bind(msgWarn, msgWarn::set);
+        Config.msgKick.bind(msgKick, msgKick::set);
     }
 
-    static boolean isNothingEnabled()
-    {
-        return !scheduleEnabled.get() && !voteEnabled.get() && !watchdogEnabled.get() && !idleShutdownEnabled.get();
-    }
-
-    private Config() { }
+    private ForgeConfig() { }
 }

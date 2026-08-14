@@ -1,14 +1,22 @@
-package com.targren.forgeautoshutdown.util;
+package com.mixiaoai.autoshutdown.util;
 
+import com.mixiaoai.autoshutdown.Platform;
+import com.mixiaoai.autoshutdown.ShutdownMod;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Static utility class for chat functions (syntactic sugar)
+ * Static utility class for chat and server functions
  */
-public class Chat
+public class ServerUtil
 {
+    private static final Logger LOGGER = ShutdownMod.LOGGER;
+
+    private ServerUtil() { }
+
     /**
      * Broadcasts an auto translated message to all players
      * @param server Server instance to broadcast to
@@ -39,5 +47,33 @@ public class Chat
     public static void to(CommandSourceStack source, Component message)
     {
         source.sendSystemMessage(message);
+    }
+
+    /** Kicks all players from the server with given reason, then shuts server down */
+    public static void shutdown(MinecraftServer server, Component message)
+    {
+        if (server == null)
+            return;
+
+        for (ServerPlayer player : server.getPlayerList().getPlayers())
+            player.connection.disconnect(message);
+
+        LOGGER.info("Shutdown initiated because: {}", message.getString());
+        server.halt(false);
+    }
+
+    /** Checks if any non-fake player is present on the server */
+    public static boolean hasRealPlayers(MinecraftServer server)
+    {
+        if (server == null)
+            return false;
+
+        for (ServerPlayer player : server.getPlayerList().getPlayers())
+        {
+            if (Platform.get().isRealPlayer(player))
+                return true;
+        }
+
+        return false;
     }
 }

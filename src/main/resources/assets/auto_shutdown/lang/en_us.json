@@ -1,0 +1,18 @@
+{
+  "auto_shutdown.msg.usershutdown": "Server shutting down by user vote",
+  "auto_shutdown.msg.voterecorded": "*** Your vote has been recorded",
+  "auto_shutdown.msg.votecleared": "*** Your previous vote has been cleared",
+  "auto_shutdown.msg.votebegun": "*** A vote has begun to shutdown the server; please do '/shutdown yes' or '/shutdown no' to cast your vote",
+  "auto_shutdown.fail.notenoughplayers": "*** Vote to shutdown the server failed; not enough players online",
+  "auto_shutdown.fail.maxnovotes": "*** Vote to shutdown the server failed; too many 'no' votes",
+  "auto_shutdown.error.toosoon": "*** It is too soon since the last vote to initiate another one. Try again in %d seconds.",
+  "auto_shutdown.error.notenoughplayers": "*** Need at least %d players online to initiate a vote",
+  "auto_shutdown.error.novoteinprogress": "*** No vote is in progress; try '/shutdown'",
+  "auto_shutdown.error.voteinprogress": "*** Vote in progress; try '/shutdown yes' or '/shutdown no'",
+  "auto_shutdown.error.votebadsyntax": "*** Incorrect syntax; try '/shutdown yes' or '/shutdown no'",
+  "auto_shutdown.error.playersonly": "*** Only players may use this command; try '/stop' instead",
+  "auto_shutdown.error.nopermission": "*** You do not have permission to use the /shutdown command",
+  "auto_shutdown.msg.idleshutdown": "Server shutdown due to inactivity",
+  "auto_shutdown.cmd.reload.success": "Configuration reloaded successfully!",
+  "auto_shutdown.cmd.reload.failed": "Failed to reload configuration. Check server logs for details."
+}

@@ -1,67 +1,31 @@
-package com.targren.forgeautoshutdown;
+package com.mixiaoai.autoshutdown;
 
-import com.targren.forgeautoshutdown.util.Server;
+import com.mixiaoai.autoshutdown.util.ServerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Monitors server for idle players during specified time period and shuts down after timeout
  */
-public class IdleShutdownTask extends TimerTask
+public class IdleShutdownTask extends AutoShutdownTask<IdleShutdownTask>
 {
-    private static IdleShutdownTask INSTANCE;
-    private static MinecraftServer SERVER;
-    private static Logger LOGGER;
-    private static Timer TIMER;
-
     private int idleMinutes = 0;
     private boolean wasEmpty = false;
 
     public static void create(MinecraftServer server)
     {
-        if (INSTANCE != null)
-        {
-            LOGGER.warn("IdleShutdownTask already exists, stopping old instance");
-            stop();
-        }
+        IdleShutdownTask task = AutoShutdownTask.create(IdleShutdownTask.class, new IdleShutdownTask(), server);
 
-        INSTANCE = new IdleShutdownTask();
-        SERVER = server;
-        LOGGER = ForgeAutoShutdown.LOGGER;
-
-        TIMER = new Timer("ForgeAutoShutdown idle checker", true); // Set as daemon thread
         int intervalMs = Config.idleCheckInterval.get() * 60 * 1000;
-        
-        TIMER.schedule(INSTANCE, intervalMs, intervalMs);
-        LOGGER.info("Idle shutdown monitor started. Active from {}:{:02d} to {}:{:02d}, timeout: {} minutes",
+        task.start("Auto Shutdown idle checker", intervalMs, intervalMs);
+        ShutdownMod.LOGGER.info("Idle shutdown monitor started. Active from {}:{:02d} to {}:{:02d}, timeout: {} minutes",
             Config.idleCheckStartHour.get(),
             Config.idleCheckStartMinute.get(),
             Config.idleCheckEndHour.get(),
             Config.idleCheckEndMinute.get(),
             Config.idleTimeout.get());
-    }
-
-    /** Stops the idle shutdown task and cleans up resources */
-    public static void stop()
-    {
-        if (TIMER != null)
-        {
-            TIMER.cancel();
-            TIMER = null;
-        }
-        
-        if (INSTANCE != null)
-        {
-            INSTANCE.cancel();
-            INSTANCE = null;
-        }
-        
-        LOGGER.debug("IdleShutdownTask stopped");
     }
 
     @Override
@@ -72,14 +36,14 @@ public class IdleShutdownTask extends TimerTask
             // Reset idle counter when outside active time
             if (idleMinutes > 0)
             {
-                LOGGER.debug("Outside active time period, resetting idle counter");
+                ShutdownMod.LOGGER.debug("Outside active time period, resetting idle counter");
                 idleMinutes = 0;
                 wasEmpty = false;
             }
             return;
         }
 
-        boolean isEmpty = !Server.hasRealPlayers(SERVER);
+        boolean isEmpty = !ServerUtil.hasRealPlayers(server);
 
         if (isEmpty)
         {
@@ -88,18 +52,18 @@ public class IdleShutdownTask extends TimerTask
                 // Server just became empty
                 wasEmpty = true;
                 idleMinutes = Config.idleCheckInterval.get();
-                LOGGER.info("Server is now empty. Will shutdown after {} minutes of idle time", Config.idleTimeout.get());
+                ShutdownMod.LOGGER.info("Server is now empty. Will shutdown after {} minutes of idle time", Config.idleTimeout.get());
             }
             else
             {
                 // Server continues to be empty
                 idleMinutes += Config.idleCheckInterval.get();
-                LOGGER.debug("Server idle for {} minutes (timeout: {})", idleMinutes, Config.idleTimeout.get());
+                ShutdownMod.LOGGER.debug("Server idle for {} minutes (timeout: {})", idleMinutes, Config.idleTimeout.get());
 
                 if (idleMinutes >= Config.idleTimeout.get())
                 {
-                    LOGGER.info("Server has been idle for {} minutes. Initiating shutdown...", idleMinutes);
-                    Server.shutdown(SERVER, Component.literal("Server shutdown due to inactivity"));
+                    ShutdownMod.LOGGER.info("Server has been idle for {} minutes. Initiating shutdown...", idleMinutes);
+                    ServerUtil.shutdown(server, Component.translatable("auto_shutdown.msg.idleshutdown"));
                 }
             }
         }
@@ -108,7 +72,7 @@ public class IdleShutdownTask extends TimerTask
             // Server has players
             if (wasEmpty && idleMinutes > 0)
             {
-                LOGGER.info("Players detected, resetting idle counter (was idle for {} minutes)", idleMinutes);
+                ShutdownMod.LOGGER.info("Players detected, resetting idle counter (was idle for {} minutes)", idleMinutes);
             }
             idleMinutes = 0;
             wasEmpty = false;

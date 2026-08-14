@@ -1,20 +1,21 @@
-# ForgeAutoShutdown
+# Auto Shutdown
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green.svg)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%2F1.21.1-green.svg)](https://www.minecraft.net/)
 [![Forge](https://img.shields.io/badge/Forge-47.3.0+-orange.svg)](https://files.minecraftforge.net/)
-[![Java](https://img.shields.io/badge/Java-17-blue.svg)](https://adoptium.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-blue.svg)](https://neoforged.net/)
+[![Java](https://img.shields.io/badge/Java-17%2F21-blue.svg)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
-[![Build](https://github.com/MiXiaoAi/ForgeAutoShutdown/actions/workflows/ci.yml/badge.svg)](https://github.com/MiXiaoAi/ForgeAutoShutdown/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/MiXiaoAi/ForgeAutoShutdown)](https://github.com/MiXiaoAi/ForgeAutoShutdown/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/MiXiaoAi/ForgeAutoShutdown/total)](https://github.com/MiXiaoAi/ForgeAutoShutdown/releases)
+[![Build](https://github.com/MiXiaoAi/AutoShutdown/actions/workflows/ci.yml/badge.svg)](https://github.com/MiXiaoAi/AutoShutdown/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/MiXiaoAi/AutoShutdown)](https://github.com/MiXiaoAi/AutoShutdown/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/MiXiaoAi/AutoShutdown/total)](https://github.com/MiXiaoAi/AutoShutdown/releases)
 
-[English](#english) | [中文](#中文)
+[English](#english) | [中文](#自动关机)
 
 ---
 
 ## English
 
-A powerful Minecraft Forge server auto-shutdown mod that supports scheduled shutdown, idle detection, player voting, and server monitoring for multiple shutdown methods.
+A powerful Minecraft server auto-shutdown mod supporting both Forge and NeoForge loaders. It supports scheduled shutdown, idle detection, player voting, and server monitoring for multiple shutdown methods.
 
 > Forked from: [targren/forgeautoshutdown](https://gitlab.com/targren/forgeautoshutdown)
 
@@ -55,12 +56,12 @@ A powerful Minecraft Forge server auto-shutdown mod that supports scheduled shut
 
 ### 📋 Requirements
 
-| Item | Requirement |
-|------|-------------|
-| Minecraft | 1.20.1 |
-| Forge | 47.3.0+ |
-| Java | 17 |
-| Installation | Server-side (Required)<br>Client-side (Optional, for localized messages) |
+| Platform | Minecraft | Loader | Java |
+|----------|-----------|--------|------|
+| Forge | 1.20.1 | Forge 47.3.0+ | 17 |
+| NeoForge | 1.21.1 | NeoForge 21.1+ | 21 |
+
+**Installation:** Server-side (Required) - Client-side (Optional, for localized messages)
 
 ### 🎮 Commands
 
@@ -73,13 +74,13 @@ A powerful Minecraft Forge server auto-shutdown mod that supports scheduled shut
 
 #### Admin Commands (Requires OP level 3)
 ```
-/forgeautoshutdown reload    # Hot-reload configuration
-/forgeautoshutdown status    # View current configuration status
+/auto_shutdown reload    # Hot-reload configuration
+/auto_shutdown status    # View current configuration status
 ```
 
 ### ⚙️ Configuration
 
-Configuration file location: `world/serverconfig/forgeautoshutdown-server.toml`
+Configuration file location: `world/serverconfig/auto_shutdown-server.toml`
 
 #### Configuration Categories
 
@@ -142,8 +143,8 @@ IdleTimeout = 60
 
 After modifying configuration files, no server restart needed:
 
-1. Edit configuration file `world/serverconfig/forgeautoshutdown-server.toml`
-2. Execute command in-game: `/forgeautoshutdown reload`
+1. Edit configuration file `world/serverconfig/auto_shutdown-server.toml`
+2. Execute command in-game: `/auto_shutdown reload`
 3. Configuration takes effect immediately
 
 **Reload Process:**
@@ -160,20 +161,22 @@ After modifying configuration files, no server restart needed:
 ### 📦 Installation
 
 #### Method 1: Download from Releases (Recommended)
-1. Visit [Releases page](https://github.com/MiXiaoAi/ForgeAutoShutdown/releases/latest)
-2. Download the latest `forgeautoshutdown-1.20.1-1.1.0.jar`
+1. Visit [Releases page](https://github.com/MiXiaoAi/AutoShutdown/releases/latest)
+2. Download the JAR matching your loader:
+   - Forge (MC 1.20.1): `auto_shutdown-1.20.1-1.2.0-forge.jar`
+   - NeoForge (MC 1.21.1): `auto_shutdown-1.21.1-1.2.0-neoforge.jar`
 3. Place the file in your server's `mods` folder
 4. Start server to auto-generate configuration files
-5. Edit configuration file `world/serverconfig/forgeautoshutdown-server.toml`
-6. Execute `/forgeautoshutdown reload` or restart server to apply configuration
+5. Edit configuration file `world/serverconfig/auto_shutdown-server.toml`
+6. Execute `/auto_shutdown reload` or restart server to apply configuration
 
 #### Method 2: Build from Source
-Requires Java 17 or higher:
+Requires Java 21 or higher (Java 17 is auto-provisioned for the Forge build):
 
 ```bash
 # Clone repository
-git clone https://github.com/MiXiaoAi/ForgeAutoShutdown.git
-cd ForgeAutoShutdown
+git clone https://github.com/MiXiaoAi/AutoShutdown.git
+cd AutoShutdown
 
 # Build
 # Windows
@@ -183,18 +186,13 @@ gradlew.bat build
 ./gradlew build
 ```
 
-Build output: `build/libs/forgeautoshutdown-1.20.1-1.1.0.jar`
+Build outputs:
+- `forge/build/libs/auto_shutdown-1.20.1-1.2.0-forge.jar`
+- `neoforge/build/libs/auto_shutdown-1.21.1-1.2.0-neoforge.jar`
 
 ### 📝 Changelog
 
-#### v1.20.1-1.1.0
-- ✨ Adapted to Minecraft 1.20.1
-- ✨ Added idle auto-shutdown feature
-- ✨ Added hot-reload configuration feature
-- ✨ Added configuration status view command
-- 🐛 Fixed server shutdown thread blocking issue
-- 🔧 Upgraded Gradle to 8.11.1
-- 🔧 Upgraded ForgeGradle to 6.0.x
+See [CHANGELOG.md](CHANGELOG.md)
 
 ### 📄 License
 
@@ -212,9 +210,9 @@ For issues or suggestions, please submit Issues or Pull Requests.
 
 ---
 
-## 中文
+## 自动关机
 
-一个功能强大的 Minecraft Forge 服务器自动关闭模组，支持定时关服、空闲检测、玩家投票和服务器监控等多种关服方式。
+一个功能强大的 Minecraft 服务器自动关闭模组（自动关机），同时支持 Forge 和 NeoForge 加载器。支持定时关服、空闲检测、玩家投票和服务器监控等多种关服方式。
 
 > Fork 自：[targren/forgeautoshutdown](https://gitlab.com/targren/forgeautoshutdown)
 
@@ -255,12 +253,12 @@ For issues or suggestions, please submit Issues or Pull Requests.
 
 ### 📋 环境要求
 
-| 项目 | 要求 |
-|------|------|
-| Minecraft | 1.20.1 |
-| Forge | 47.3.0+ |
-| Java | 17 |
-| 安装位置 | 服务器端（必须）<br>客户端（可选，用于本地化消息） |
+| 平台 | Minecraft | 加载器 | Java |
+|------|-----------|--------|------|
+| Forge | 1.20.1 | Forge 47.3.0+ | 17 |
+| NeoForge | 1.21.1 | NeoForge 21.1+ | 21 |
+
+**安装位置：** 服务器端（必须）· 客户端（可选，用于本地化消息）
 
 ### 🎮 指令说明
 
@@ -273,13 +271,13 @@ For issues or suggestions, please submit Issues or Pull Requests.
 
 #### 管理员命令（需要 OP 等级 3）
 ```
-/forgeautoshutdown reload    # 热重载配置文件
-/forgeautoshutdown status    # 查看当前配置状态
+/auto_shutdown reload    # 热重载配置文件
+/auto_shutdown status    # 查看当前配置状态
 ```
 
 ### ⚙️ 配置说明
 
-配置文件位置：`world/serverconfig/forgeautoshutdown-server.toml`
+配置文件位置：`world/serverconfig/auto_shutdown-server.toml`
 
 #### 配置分类
 
@@ -345,8 +343,8 @@ IdleTimeout = 60
 
 修改配置文件后，无需重启服务器：
 
-1. 编辑配置文件 `world/serverconfig/forgeautoshutdown-server.toml`
-2. 在游戏中执行命令：`/forgeautoshutdown reload`
+1. 编辑配置文件 `world/serverconfig/auto_shutdown-server.toml`
+2. 在游戏中执行命令：`/auto_shutdown reload`
 3. 配置立即生效
 
 **重载过程：**
@@ -363,20 +361,22 @@ IdleTimeout = 60
 ### 📦 安装方法
 
 #### 方式一：从 Release 下载（推荐）
-1. 访问 [Releases 页面](https://github.com/MiXiaoAi/ForgeAutoShutdown/releases/latest)
-2. 下载最新版本的 `forgeautoshutdown-1.20.1-1.1.0.jar`
+1. 访问 [Releases 页面](https://github.com/MiXiaoAi/AutoShutdown/releases/latest)
+2. 下载对应加载器的 JAR：
+   - Forge（MC 1.20.1）：`auto_shutdown-1.20.1-1.2.0-forge.jar`
+   - NeoForge（MC 1.21.1）：`auto_shutdown-1.21.1-1.2.0-neoforge.jar`
 3. 将文件放入服务器的 `mods` 文件夹
 4. 启动服务器，自动生成配置文件
-5. 编辑配置文件 `world/serverconfig/forgeautoshutdown-server.toml`
-6. 执行 `/forgeautoshutdown reload` 或重启服务器应用配置
+5. 编辑配置文件 `world/serverconfig/auto_shutdown-server.toml`
+6. 执行 `/auto_shutdown reload` 或重启服务器应用配置
 
 #### 方式二：自行构建
-需要 Java 17 或更高版本：
+需要 Java 21 或更高版本（Forge 构建所需的 Java 17 会自动下载）：
 
 ```bash
 # 克隆仓库
-git clone https://github.com/MiXiaoAi/ForgeAutoShutdown.git
-cd ForgeAutoShutdown
+git clone https://github.com/MiXiaoAi/AutoShutdown.git
+cd AutoShutdown
 
 # 构建
 # Windows
@@ -386,18 +386,13 @@ gradlew.bat build
 ./gradlew build
 ```
 
-构建产物位于：`build/libs/forgeautoshutdown-1.20.1-1.1.0.jar`
+构建产物位于：
+- `forge/build/libs/auto_shutdown-1.20.1-1.2.0-forge.jar`
+- `neoforge/build/libs/auto_shutdown-1.21.1-1.2.0-neoforge.jar`
 
 ### 📝 更新日志
 
-#### v1.20.1-1.1.0
-- ✨ 适配 Minecraft 1.20.1
-- ✨ 新增空闲自动关服功能
-- ✨ 新增热重载配置功能
-- ✨ 新增配置状态查看命令
-- 🐛 修复服务器关闭时线程阻塞问题
-- 🔧 升级 Gradle 到 8.11.1
-- 🔧 升级 ForgeGradle 到 6.0.x
+参见 [CHANGELOG.md](CHANGELOG.md)
 
 ### 📄 许可证
 

@@ -6,10 +6,20 @@ on:
       - 'v*'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Release version (e.g., v1.20.1-1.1.0)'
-        required: true
-        default: 'v1.20.1-1.1.0'
+      tag:
+        description: 'Release tag (e.g., v1.2.0)'
+        required: false
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      draft:
+        description: 'Create as draft'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -23,10 +33,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
         
     - name: Cache Gradle packages
@@ -45,70 +55,137 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build --no-daemon
       
-    - name: Get version from gradle.properties
-      id: get_version
+    - name: Get build info
+      id: build_info
       run: |
         VERSION=$(grep "mod_version=" gradle.properties | cut -d'=' -f2)
+        FORGE_MC=$(grep "forge_mc_version=" gradle.properties | cut -d'=' -f2)
+        NEOFORGE_MC=$(grep "neoforge_mc_version=" gradle.properties | cut -d'=' -f2)
+        FORGE_JAR="auto_shutdown-$FORGE_MC-$VERSION-forge.jar"
+        NEOFORGE_JAR="auto_shutdown-$NEOFORGE_MC-$VERSION-neoforge.jar"
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "jar_name=forgeautoshutdown-$VERSION.jar" >> $GITHUB_OUTPUT
+        echo "forge_jar=$FORGE_JAR" >> $GITHUB_OUTPUT
+        echo "neoforge_jar=$NEOFORGE_JAR" >> $GITHUB_OUTPUT
+        echo "forge_path=forge/build/libs/$FORGE_JAR" >> $GITHUB_OUTPUT
+        echo "neoforge_path=neoforge/build/libs/$NEOFORGE_JAR" >> $GITHUB_OUTPUT
         
-    - name: Verify build output
-      run: |
-        ls -la build/libs/
-        if [ ! -f "build/libs/${{ steps.get_version.outputs.jar_name }}" ]; then
-          echo "Build failed: JAR file not found"
+        # Verify JARs exist
+        if [ ! -f "forge/build/libs/$FORGE_JAR" ]; then
+          echo "❌ Error: Forge JAR file not found at forge/build/libs/$FORGE_JAR"
+          ls -la forge/build/libs/
+          exit 1
+        fi
+        if [ ! -f "neoforge/build/libs/$NEOFORGE_JAR" ]; then
+          echo "❌ Error: NeoForge JAR file not found at neoforge/build/libs/$NEOFORGE_JAR"
+          ls -la neoforge/build/libs/
           exit 1
         fi
         
+        # Get total file size
+        FORGE_SIZE=$(stat -c%s "forge/build/libs/$FORGE_JAR")
+        NEOFORGE_SIZE=$(stat -c%s "neoforge/build/libs/$NEOFORGE_JAR")
+        TOTAL_SIZE=$((FORGE_SIZE + NEOFORGE_SIZE))
+        echo "file_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
+        
+    - name: Determine release tag
+      id: release_tag
+      run: |
+        TAG="${{ github.event.inputs.tag || github.ref_name }}"
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+        
     - name: Create Release
+      id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.event.inputs.version || github.ref_name }}
-        name: ForgeAutoShutdown ${{ github.event.inputs.version || github.ref_name }}
+        tag_name: ${{ steps.release_tag.outputs.tag }}
+        name: Auto Shutdown ${{ steps.release_tag.outputs.tag }}
+        draft: ${{ inputs.draft || false }}
+        prerelease: ${{ inputs.prerelease || false }}
+        generate_release_notes: true
         body: |
-          ## ForgeAutoShutdown ${{ steps.get_version.outputs.version }}
+          ## 🎮 Auto Shutdown ${{ steps.build_info.outputs.version }}
           
-          ### 🎮 Minecraft 1.20.1 Forge Mod
+          **Dual Platform Mod for Automatic Server Shutdown (Forge + NeoForge)**
           
-          **Features:**
-          - ⏰ Scheduled server shutdown (daily time or uptime-based)
-          - 💤 Idle auto-shutdown with configurable time windows
-          - 🗳️ Player voting system for server shutdown
-          - 🔍 Server watchdog monitoring
-          - 🔄 Hot-reload configuration without server restart
+          ### ✨ Features
+          - ⏰ **Scheduled Shutdown**: Daily time or uptime-based automatic shutdown
+          - 💤 **Idle Auto-Shutdown**: Configurable time windows for idle detection
+          - 🗳️ **Player Voting**: Democratic server shutdown voting system
+          - 🔍 **Server Watchdog**: Monitor server health and performance
+          - 🔄 **Hot-Reload**: Update configuration without server restart
+          - 📊 **Status Commands**: Real-time configuration monitoring
           
-          **Requirements:**
-          - Minecraft: 1.20.1
-          - Forge: 47.3.0+
-          - Java: 17
+          ### 📋 Requirements
+          | Platform | Minecraft | Loader | Java |
+          |----------|-----------|--------|------|
+          | Forge | 1.20.1 | Forge 47.3.0+ | 17+ |
+          | NeoForge | 1.21.1 | NeoForge 21.1+ | 21+ |
           
-          **Installation:**
-          1. Download the JAR file below
-          2. Place it in your server's `mods` folder
-          3. Start the server to generate config files
-          4. Configure in `world/serverconfig/forgeautoshutdown-server.toml`
-          5. Use `/forgeautoshutdown reload` to apply changes
+          ### 📦 Downloads
+          - **Forge (MC 1.20.1)**: `${{ steps.build_info.outputs.forge_jar }}`
+          - **NeoForge (MC 1.21.1)**: `${{ steps.build_info.outputs.neoforge_jar }}`
           
-          **Commands:**
-          - `/shutdown` - Start voting (players)
-          - `/forgeautoshutdown reload` - Reload config (admins)
-          - `/forgeautoshutdown status` - Check status (admins)
+          ### 🚀 Quick Start
+          1. **Download** the JAR for your platform below
+          2. **Install** by placing it in your server's `mods` folder
+          3. **Start** the server to auto-generate configuration files
+          4. **Configure** in `world/serverconfig/auto_shutdown-server.toml`
+          5. **Reload** with `/auto_shutdown reload` (no restart needed!)
+          
+          ### 🎮 Commands
+          ```
+          # Player Commands
+          /shutdown              # Start shutdown vote
+          /shutdown yes|no       # Cast vote
+          
+          # Admin Commands (OP level 3)
+          /auto_shutdown reload    # Hot-reload configuration
+          /auto_shutdown status    # View current status
+          ```
+          
+          ### ⚙️ Configuration Example
+          ```toml
+          [IdleShutdown]
+              Enabled = true
+              StartHour = 0          # Monitor from 00:00
+              EndHour = 23           # Monitor until 23:59
+              IdleTimeout = 30       # Shutdown after 30 min idle
+              CheckInterval = 1      # Check every 1 minute
+          ```
+          
+          ### 📖 Documentation
+          - **Full Guide**: [README.md](https://github.com/MiXiaoAi/AutoShutdown/blob/master/README.md)
+          - **Configuration**: Detailed setup instructions in README
+          - **Commands**: Complete command reference available
+          
+          ### 🐛 Support
+          - **Issues**: [Report bugs here](https://github.com/MiXiaoAi/AutoShutdown/issues)
+          - **Discussions**: [Community support](https://github.com/MiXiaoAi/AutoShutdown/discussions)
           
           ---
           
-          📖 **Full documentation:** [README.md](https://github.com/MiXiaoAi/ForgeAutoShutdown/blob/master/README.md)
+          **File Info**: `${{ steps.build_info.outputs.forge_jar }}` + `${{ steps.build_info.outputs.neoforge_jar }}` ($((${{ steps.build_info.outputs.file_size }} / 1024)) KB total)
           
-          🐛 **Report issues:** [GitHub Issues](https://github.com/MiXiaoAi/ForgeAutoShutdown/issues)
-        draft: false
-        prerelease: false
+          **Build**: GitHub Actions #${{ github.run_number }} | **Commit**: ${{ github.sha }}
         files: |
-          build/libs/${{ steps.get_version.outputs.jar_name }}
+          ${{ steps.build_info.outputs.forge_path }}
+          ${{ steps.build_info.outputs.neoforge_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ForgeAutoShutdown-${{ steps.get_version.outputs.version }}
-        path: build/libs/*.jar
+        name: AutoShutdown-${{ steps.build_info.outputs.version }}
+        path: |
+          forge/build/libs/*.jar
+          neoforge/build/libs/*.jar
         retention-days: 30
+        
+    - name: Release Summary
+      run: |
+        echo "🎉 Release created successfully!"
+        echo "📦 Tag: ${{ steps.release_tag.outputs.tag }}"
+        echo "📁 Files: ${{ steps.build_info.outputs.forge_jar }}, ${{ steps.build_info.outputs.neoforge_jar }}"
+        echo "📊 Size: $((${{ steps.build_info.outputs.file_size }} / 1024)) KB"
+        echo "🔗 URL: ${{ steps.create_release.outputs.url }}"
