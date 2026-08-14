@@ -17,6 +17,7 @@ class ForgeConfig
 
     static final ForgeConfigSpec.BooleanValue scheduleEnabled;
     static final ForgeConfigSpec.BooleanValue scheduleWarning;
+    static final ForgeConfigSpec.IntValue scheduleWarningCount;
     static final ForgeConfigSpec.BooleanValue scheduleDelay;
     static final ForgeConfigSpec.BooleanValue scheduleUptime;
     static final ForgeConfigSpec.IntValue scheduleHour;
@@ -55,6 +56,7 @@ class ForgeConfig
 
         scheduleEnabled = builder.define("Enabled", true);
         scheduleWarning = builder.define("Warnings", true);
+        scheduleWarningCount = builder.defineInRange("WarningCount", 5, 1, 60);
         scheduleDelay = builder.define("Delay", false);
         scheduleUptime = builder.define("Uptime", false);
         scheduleHour = builder.defineInRange("Hour", 5, 0, 720);
@@ -65,7 +67,7 @@ class ForgeConfig
         builder.comment("Allows players to shut down the server without admin intervention")
             .push(VOTING);
 
-        voteEnabled = builder.define("VoteEnabled", false);
+        voteEnabled = builder.define("Enabled", false);
         voteInterval = builder.defineInRange("VoteInterval", 15, 0, 1440);
         minVoters = builder.defineInRange("MinVoters", 4, 1, 999);
         maxNoVotes = builder.defineInRange("MaxNoVotes", 2, 1, 999);
@@ -112,6 +114,7 @@ class ForgeConfig
     {
         Config.scheduleEnabled.bind(scheduleEnabled, scheduleEnabled::set);
         Config.scheduleWarning.bind(scheduleWarning, scheduleWarning::set);
+        Config.scheduleWarningCount.bind(scheduleWarningCount, scheduleWarningCount::set);
         Config.scheduleDelay.bind(scheduleDelay, scheduleDelay::set);
         Config.scheduleUptime.bind(scheduleUptime, scheduleUptime::set);
         Config.scheduleHour.bind(scheduleHour, scheduleHour::set);

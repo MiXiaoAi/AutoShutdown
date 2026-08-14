@@ -23,7 +23,7 @@ A powerful Minecraft server auto-shutdown mod supporting both Forge and NeoForge
 #### 🕐 Scheduled Shutdown
 - Support daily fixed time shutdown (e.g., 5:00 AM daily)
 - Support uptime-based shutdown (e.g., after 24 hours of runtime)
-- Automatic countdown broadcast before shutdown (default 5 times)
+- Countdown broadcasts before shutdown (default 5 times)
 - Optional delay when players are online
 
 #### 💤 Idle Auto-Shutdown (New Feature)

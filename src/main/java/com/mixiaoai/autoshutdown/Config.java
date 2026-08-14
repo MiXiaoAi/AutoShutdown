@@ -16,6 +16,7 @@ class Config
 
     static final ConfigVal<Boolean> scheduleEnabled = new ConfigVal<>(true);
     static final ConfigVal<Boolean> scheduleWarning = new ConfigVal<>(true);
+    static final ConfigVal<Integer> scheduleWarningCount = new ConfigVal<>(5);
     static final ConfigVal<Boolean> scheduleDelay = new ConfigVal<>(false);
     static final ConfigVal<Boolean> scheduleUptime = new ConfigVal<>(false);
     static final ConfigVal<Integer> scheduleHour = new ConfigVal<>(5);

@@ -1,0 +1,18 @@
+{
+  "auto_shutdown.msg.usershutdown": "服务器正在因玩家投票而关闭",
+  "auto_shutdown.msg.voterecorded": "*** 您的投票已记录",
+  "auto_shutdown.msg.votecleared": "*** 您之前的投票已清除",
+  "auto_shutdown.msg.votebegun": "*** 已发起关闭服务器的投票；请输入 '/shutdown yes' 或 '/shutdown no' 进行投票",
+  "auto_shutdown.fail.notenoughplayers": "*** 关闭服务器的投票失败；在线玩家不足",
+  "auto_shutdown.fail.maxnovotes": "*** 关闭服务器的投票失败；'反对'票数过多",
+  "auto_shutdown.error.toosoon": "*** 距上次投票间隔过短，无法再次发起投票。请在 %d 秒后重试。",
+  "auto_shutdown.error.notenoughplayers": "*** 发起投票至少需要 %d 名玩家在线",
+  "auto_shutdown.error.novoteinprogress": "*** 当前没有进行中的投票；请输入 '/shutdown'",
+  "auto_shutdown.error.voteinprogress": "*** 投票正在进行中；请输入 '/shutdown yes' 或 '/shutdown no'",
+  "auto_shutdown.error.votebadsyntax": "*** 语法错误；请输入 '/shutdown yes' 或 '/shutdown no'",
+  "auto_shutdown.error.playersonly": "*** 只有玩家可以使用此命令；请改用 '/stop'",
+  "auto_shutdown.error.nopermission": "*** 您没有使用 /shutdown 命令的权限",
+  "auto_shutdown.msg.idleshutdown": "服务器因长时间无玩家在线而关闭",
+  "auto_shutdown.cmd.reload.success": "配置重载成功！",
+  "auto_shutdown.cmd.reload.failed": "配置重载失败。请查看服务器日志以获取详细信息。"
+}

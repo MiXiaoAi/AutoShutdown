@@ -13,6 +13,8 @@ public class NeoAutoShutdown
 {
     public NeoAutoShutdown(IEventBus modBus, ModContainer container)
     {
+        Platform.set(new NeoPlatform());
+
         container.registerConfig(ModConfig.Type.SERVER, NeoConfig.SPEC);
         NeoConfig.init();
 

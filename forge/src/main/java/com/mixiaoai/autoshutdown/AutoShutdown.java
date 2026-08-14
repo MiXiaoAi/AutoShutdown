@@ -12,6 +12,8 @@ public class AutoShutdown
 {
     public AutoShutdown()
     {
+        Platform.set(new ForgePlatform());
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.SPEC);
         ForgeConfig.init();
 

@@ -19,7 +19,7 @@ import java.util.Date;
  */
 public abstract class ShutdownTask extends AutoShutdownTask<ShutdownTask>
 {
-    static final Format DATE = new SimpleDateFormat("HH:mm MMM d");
+    static final Format DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private boolean registered = false;
 
@@ -53,7 +53,7 @@ public abstract class ShutdownTask extends AutoShutdownTask<ShutdownTask>
     }
 
     boolean executeTick = false;
-    byte warningsLeft = 5;
+    byte warningsLeft = (byte) Config.scheduleWarningCount.get().intValue();
     int delayMinutes = 0;
 
     /** Runs from the timer thread */
@@ -107,7 +107,7 @@ public abstract class ShutdownTask extends AutoShutdownTask<ShutdownTask>
         if (!ServerUtil.hasRealPlayers(server))
             return false;
 
-        warningsLeft = 5;
+        warningsLeft = (byte) Config.scheduleWarningCount.get().intValue();
         delayMinutes += Config.scheduleDelayBy.get();
         ShutdownMod.LOGGER.info("Shutdown delayed by {} minutes; server is not empty", delayMinutes);
         return true;
