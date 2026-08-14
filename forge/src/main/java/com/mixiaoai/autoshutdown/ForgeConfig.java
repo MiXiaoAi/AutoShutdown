@@ -15,6 +15,8 @@ class ForgeConfig
 
     static final ForgeConfigSpec SPEC;
 
+    static final ForgeConfigSpec.ConfigValue<String> language;
+
     static final ForgeConfigSpec.BooleanValue scheduleEnabled;
     static final ForgeConfigSpec.BooleanValue scheduleWarning;
     static final ForgeConfigSpec.IntValue scheduleWarningCount;
@@ -50,6 +52,8 @@ class ForgeConfig
     static
     {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+
+        language = builder.define("Language", "en_us");
 
         builder.comment("All times are 24 hour (military) format, relative to machine's local time")
             .push(SCHEDULE);
@@ -112,6 +116,8 @@ class ForgeConfig
     /** Binds the spec values to the common Config holders */
     static void init()
     {
+        Config.language.bind(language, language::set);
+
         Config.scheduleEnabled.bind(scheduleEnabled, scheduleEnabled::set);
         Config.scheduleWarning.bind(scheduleWarning, scheduleWarning::set);
         Config.scheduleWarningCount.bind(scheduleWarningCount, scheduleWarningCount::set);

@@ -13,11 +13,15 @@ public class ShutdownMod
     public static final String MODID = "auto_shutdown";
     public static final Logger LOGGER = LogManager.getLogger();
 
+    private static MinecraftServer activeServer;
+
     private ShutdownMod() { }
 
     /** Called when the server starts; validates config and starts enabled tasks */
     public static void onServerStarting(MinecraftServer server)
     {
+        activeServer = server;
+
         Config.validate();
 
         if (Config.isNothingEnabled())
@@ -28,6 +32,23 @@ public class ShutdownMod
         }
 
         startAllTasks(server);
+    }
+
+    /** Called when the server stops; clears the active server reference */
+    public static void onServerStopping()
+    {
+        activeServer = null;
+    }
+
+    /** Called when the platform config file changes at runtime; hot-reloads tasks */
+    public static void onConfigChanged()
+    {
+        LOGGER.info("Auto Shutdown configuration changed, reloading...");
+
+        if (activeServer == null)
+            return;
+
+        reload(activeServer);
     }
 
     /**

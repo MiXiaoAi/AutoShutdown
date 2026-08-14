@@ -24,20 +24,39 @@ public class ModCommands
 {
     private static final Logger LOGGER = ShutdownMod.LOGGER;
 
-    private static final SimpleCommandExceptionType PLAYERS_ONLY =
-        new SimpleCommandExceptionType(Component.translatable("auto_shutdown.error.playersonly"));
-    private static final SimpleCommandExceptionType NO_VOTE_IN_PROGRESS =
-        new SimpleCommandExceptionType(Component.translatable("auto_shutdown.error.novoteinprogress"));
-    private static final SimpleCommandExceptionType VOTE_IN_PROGRESS =
-        new SimpleCommandExceptionType(Component.translatable("auto_shutdown.error.voteinprogress"));
-    private static final DynamicCommandExceptionType TOO_SOON =
-        new DynamicCommandExceptionType(seconds ->
-            Component.translatable("auto_shutdown.error.toosoon", seconds)
+    private static SimpleCommandExceptionType playersOnly()
+    {
+        return new SimpleCommandExceptionType(ServerUtil.localized(
+            "auto_shutdown.error.playersonly", "*** Only players may use this command; try '/stop' instead"));
+    }
+
+    private static SimpleCommandExceptionType noVoteInProgress()
+    {
+        return new SimpleCommandExceptionType(ServerUtil.localized(
+            "auto_shutdown.error.novoteinprogress", "*** No vote is in progress; try '/shutdown'"));
+    }
+
+    private static SimpleCommandExceptionType voteInProgress()
+    {
+        return new SimpleCommandExceptionType(ServerUtil.localized(
+            "auto_shutdown.error.voteinprogress", "*** Vote in progress; try '/shutdown yes' or '/shutdown no'"));
+    }
+
+    private static DynamicCommandExceptionType tooSoon()
+    {
+        return new DynamicCommandExceptionType(seconds ->
+            ServerUtil.localized("auto_shutdown.error.toosoon",
+                "*** It is too soon since the last vote to initiate another one. Try again in %d seconds.", seconds)
         );
-    private static final DynamicCommandExceptionType NOT_ENOUGH_PLAYERS =
-        new DynamicCommandExceptionType(required ->
-            Component.translatable("auto_shutdown.error.notenoughplayers", required)
+    }
+
+    private static DynamicCommandExceptionType notEnoughPlayers()
+    {
+        return new DynamicCommandExceptionType(required ->
+            ServerUtil.localized("auto_shutdown.error.notenoughplayers",
+                "*** Need at least %d players online to initiate a vote", required)
         );
+    }
 
     private static final ModCommands INSTANCE = new ModCommands();
 
@@ -65,19 +84,22 @@ public class ModCommands
                     try
                     {
                         LOGGER.info("Reloading Auto Shutdown configuration...");
-                        source.sendSuccess(() -> Component.literal("§e[AutoShutdown] Reloading configuration..."), true);
+                        source.sendSuccess(() -> ServerUtil.localized(
+                            "auto_shutdown.cmd.reload.begin", "§e[AutoShutdown] Reloading configuration..."), true);
 
                         // Reload configuration
                         boolean success = ShutdownMod.reload(source.getServer());
 
                         if (success)
                         {
-                            source.sendSuccess(() -> Component.literal("§a[AutoShutdown] Configuration reloaded successfully!"), true);
+                            source.sendSuccess(() -> ServerUtil.localized(
+                                "auto_shutdown.cmd.reload.success", "§a[AutoShutdown] Configuration reloaded successfully!"), true);
                             LOGGER.info("Configuration reloaded successfully");
                         }
                         else
                         {
-                            source.sendFailure(Component.literal("§c[AutoShutdown] Failed to reload configuration. Check server logs for details."));
+                            source.sendFailure(ServerUtil.localized(
+                                "auto_shutdown.cmd.reload.failed", "§c[AutoShutdown] Failed to reload configuration. Check server logs for details."));
                             LOGGER.error("Failed to reload configuration");
                         }
 
@@ -86,7 +108,8 @@ public class ModCommands
                     catch (Exception e)
                     {
                         LOGGER.error("Error reloading configuration", e);
-                        source.sendFailure(Component.literal("§c[AutoShutdown] Error: " + e.getMessage()));
+                        source.sendFailure(ServerUtil.localized(
+                            "auto_shutdown.cmd.reload.error", "§c[AutoShutdown] Error: %s", e.getMessage()));
                         return 0;
                     }
                 })
@@ -95,20 +118,28 @@ public class ModCommands
                 .executes(context -> {
                     CommandSourceStack source = context.getSource();
 
-                    source.sendSuccess(() -> Component.literal("§6[AutoShutdown] Current Status:"), false);
-                    source.sendSuccess(() -> Component.literal("§7- Schedule: " + (Config.scheduleEnabled.get() ? "§aEnabled" : "§cDisabled")), false);
-                    source.sendSuccess(() -> Component.literal("§7- Voting: " + (Config.voteEnabled.get() ? "§aEnabled" : "§cDisabled")), false);
-                    source.sendSuccess(() -> Component.literal("§7- Watchdog: " + (Config.watchdogEnabled.get() ? "§aEnabled" : "§cDisabled")), false);
-                    source.sendSuccess(() -> Component.literal("§7- Idle Shutdown: " + (Config.idleShutdownEnabled.get() ? "§aEnabled" : "§cDisabled")), false);
+                    source.sendSuccess(() -> ServerUtil.localized(
+                        "auto_shutdown.cmd.status.header", "§6[AutoShutdown] Current Status:"), false);
+                    source.sendSuccess(() -> ServerUtil.localized(
+                        "auto_shutdown.cmd.status.schedule", "§7- Schedule: %s",
+                        statusText(Config.scheduleEnabled.get())), false);
+                    source.sendSuccess(() -> ServerUtil.localized(
+                        "auto_shutdown.cmd.status.voting", "§7- Voting: %s",
+                        statusText(Config.voteEnabled.get())), false);
+                    source.sendSuccess(() -> ServerUtil.localized(
+                        "auto_shutdown.cmd.status.watchdog", "§7- Watchdog: %s",
+                        statusText(Config.watchdogEnabled.get())), false);
+                    source.sendSuccess(() -> ServerUtil.localized(
+                        "auto_shutdown.cmd.status.idle", "§7- Idle Shutdown: %s",
+                        statusText(Config.idleShutdownEnabled.get())), false);
 
                     if (Config.idleShutdownEnabled.get())
                     {
-                        source.sendSuccess(() -> Component.literal(String.format("§7  Active: %02d:%02d - %02d:%02d, Timeout: %d min",
-                            Config.idleCheckStartHour.get(),
-                            Config.idleCheckStartMinute.get(),
-                            Config.idleCheckEndHour.get(),
-                            Config.idleCheckEndMinute.get(),
-                            Config.idleTimeout.get())), false);
+                        source.sendSuccess(() -> ServerUtil.localized(
+                            "auto_shutdown.cmd.status.idle_active", "§7  Active: %s - %s, Timeout: %s min",
+                            String.format("%02d:%02d", Config.idleCheckStartHour.get(), Config.idleCheckStartMinute.get()),
+                            String.format("%02d:%02d", Config.idleCheckEndHour.get(), Config.idleCheckEndMinute.get()),
+                            Config.idleTimeout.get()), false);
                     }
 
                     return 1;
@@ -121,7 +152,6 @@ public class ModCommands
     private static void registerVoting(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(Commands.literal("shutdown")
-            .requires(source -> Config.voteEnabled.get())
             .executes(context -> INSTANCE.initiateVote(context.getSource()))
             .then(Commands.literal("yes")
                 .executes(context -> INSTANCE.processVote(context.getSource(), true))
@@ -134,48 +164,72 @@ public class ModCommands
 
     private ModCommands() { }
 
+    private static String statusText(boolean enabled)
+    {
+        return enabled
+            ? LangLoader.get("auto_shutdown.cmd.status.enabled", "§aEnabled")
+            : LangLoader.get("auto_shutdown.cmd.status.disabled", "§cDisabled");
+    }
+
     private int initiateVote(CommandSourceStack source) throws CommandSyntaxException
     {
+        if (!Config.voteEnabled.get())
+        {
+            source.sendFailure(ServerUtil.localized(
+                "auto_shutdown.error.votenotenabled", "§c[AutoShutdown] Voting is not enabled by the server administrator."));
+            return 0;
+        }
+
         ServerPlayer player = getPlayer(source);
 
         if (voting)
-            throw VOTE_IN_PROGRESS.create();
+            throw voteInProgress().create();
 
         long now = System.currentTimeMillis();
         long interval = (long) Config.voteInterval.get() * 60 * 1000;
         long difference = now - lastVoteMillis;
 
         if (difference < interval)
-            throw TOO_SOON.create((interval - difference) / 1000);
+            throw tooSoon().create((interval - difference) / 1000);
 
         MinecraftServer server = source.getServer();
         int players = server.getPlayerList().getPlayers().size();
 
         if (players < Config.minVoters.get())
-            throw NOT_ENOUGH_PLAYERS.create(Config.minVoters.get());
+            throw notEnoughPlayers().create(Config.minVoters.get());
 
         votes.clear();
         voting = true;
 
-        ServerUtil.toAll(server, "auto_shutdown.msg.votebegun");
+        ServerUtil.toAll(server, ServerUtil.localized("auto_shutdown.msg.votebegun",
+            "*** A vote has begun to shutdown the server; please do '/shutdown yes' or '/shutdown no' to cast your vote"));
         LOGGER.info("AutoShutdown: {} called for a shutdown vote", player.getScoreboardName());
         return 1;
     }
 
     private int processVote(CommandSourceStack source, boolean vote) throws CommandSyntaxException
     {
+        if (!Config.voteEnabled.get())
+        {
+            source.sendFailure(ServerUtil.localized(
+                "auto_shutdown.error.votenotenabled", "§c[AutoShutdown] Voting is not enabled by the server administrator."));
+            return 0;
+        }
+
         ServerPlayer player = getPlayer(source);
 
         if (!voting)
-            throw NO_VOTE_IN_PROGRESS.create();
+            throw noVoteInProgress().create();
 
         UUID id = player.getUUID();
 
         if (votes.containsKey(id))
-            ServerUtil.to(source, "auto_shutdown.msg.votecleared");
+            ServerUtil.to(source, ServerUtil.localized("auto_shutdown.msg.votecleared",
+                "*** Your previous vote has been cleared"));
 
         votes.put(id, vote);
-        ServerUtil.to(source, "auto_shutdown.msg.voterecorded");
+        ServerUtil.to(source, ServerUtil.localized("auto_shutdown.msg.voterecorded",
+            "*** Your vote has been recorded"));
 
         LOGGER.info("AutoShutdown: {} voted {}", player.getScoreboardName(), vote ? "yes" : "no");
         checkVotes(source.getServer());
@@ -188,7 +242,8 @@ public class ModCommands
 
         if (players < Config.minVoters.get())
         {
-            voteFailure(server, "auto_shutdown.fail.notenoughplayers");
+            voteFailure(server, ServerUtil.localized("auto_shutdown.fail.notenoughplayers",
+                "*** Vote to shutdown the server failed; not enough players online"));
             return;
         }
 
@@ -204,7 +259,8 @@ public class ModCommands
 
         if (no >= Config.maxNoVotes.get())
         {
-            voteFailure(server, "auto_shutdown.fail.maxnovotes");
+            voteFailure(server, ServerUtil.localized("auto_shutdown.fail.maxnovotes",
+                "*** Vote to shutdown the server failed; too many 'no' votes"));
             return;
         }
 
@@ -215,12 +271,13 @@ public class ModCommands
     private void voteSuccess(MinecraftServer server)
     {
         LOGGER.info("Server shutdown initiated by vote");
-        ServerUtil.shutdown(server, Component.translatable("auto_shutdown.msg.usershutdown"));
+        ServerUtil.shutdown(server, ServerUtil.localized("auto_shutdown.msg.usershutdown",
+            "Server shutting down by user vote"));
     }
 
-    private void voteFailure(MinecraftServer server, String reason)
+    private void voteFailure(MinecraftServer server, Component message)
     {
-        ServerUtil.toAll(server, reason);
+        ServerUtil.toAll(server, message);
         votes.clear();
 
         lastVoteMillis = System.currentTimeMillis();
@@ -232,6 +289,6 @@ public class ModCommands
         if (source.getEntity() instanceof ServerPlayer player)
             return player;
 
-        throw PLAYERS_ONLY.create();
+        throw playersOnly().create();
     }
 }

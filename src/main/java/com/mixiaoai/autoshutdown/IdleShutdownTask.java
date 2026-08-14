@@ -63,7 +63,8 @@ public class IdleShutdownTask extends AutoShutdownTask<IdleShutdownTask>
                 if (idleMinutes >= Config.idleTimeout.get())
                 {
                     ShutdownMod.LOGGER.info("Server has been idle for {} minutes. Initiating shutdown...", idleMinutes);
-                    ServerUtil.shutdown(server, Component.translatable("auto_shutdown.msg.idleshutdown"));
+                    ServerUtil.shutdown(server, ServerUtil.localized("auto_shutdown.msg.idleshutdown",
+                        "Server shutdown due to inactivity"));
                 }
             }
         }

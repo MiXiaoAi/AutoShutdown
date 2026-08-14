@@ -15,6 +15,8 @@ class NeoConfig
 
     static final ModConfigSpec SPEC;
 
+    static final ModConfigSpec.ConfigValue<String> language;
+
     static final ModConfigSpec.BooleanValue scheduleEnabled;
     static final ModConfigSpec.BooleanValue scheduleWarning;
     static final ModConfigSpec.IntValue scheduleWarningCount;
@@ -50,6 +52,8 @@ class NeoConfig
     static
     {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+
+        language = builder.define("Language", "en_us");
 
         builder.comment("All times are 24 hour (military) format, relative to machine's local time")
             .push(SCHEDULE);
@@ -112,6 +116,8 @@ class NeoConfig
     /** Binds the spec values to the common Config holders */
     static void init()
     {
+        Config.language.bind(language, language::set);
+
         Config.scheduleEnabled.bind(scheduleEnabled, scheduleEnabled::set);
         Config.scheduleWarning.bind(scheduleWarning, scheduleWarning::set);
         Config.scheduleWarningCount.bind(scheduleWarningCount, scheduleWarningCount::set);

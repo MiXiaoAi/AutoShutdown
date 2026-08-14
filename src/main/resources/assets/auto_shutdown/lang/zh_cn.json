@@ -12,7 +12,18 @@
   "auto_shutdown.error.votebadsyntax": "*** 语法错误；请输入 '/shutdown yes' 或 '/shutdown no'",
   "auto_shutdown.error.playersonly": "*** 只有玩家可以使用此命令；请改用 '/stop'",
   "auto_shutdown.error.nopermission": "*** 您没有使用 /shutdown 命令的权限",
+  "auto_shutdown.error.votenotenabled": "§c[AutoShutdown] 服务器管理员未开启玩家投票功能。",
   "auto_shutdown.msg.idleshutdown": "服务器因长时间无玩家在线而关闭",
-  "auto_shutdown.cmd.reload.success": "配置重载成功！",
-  "auto_shutdown.cmd.reload.failed": "配置重载失败。请查看服务器日志以获取详细信息。"
+  "auto_shutdown.cmd.reload.begin": "§e[AutoShutdown] 正在重载配置……",
+  "auto_shutdown.cmd.reload.success": "§a[AutoShutdown] 配置重载成功！",
+  "auto_shutdown.cmd.reload.failed": "§c[AutoShutdown] 配置重载失败，请查看服务器日志获取详细信息。",
+  "auto_shutdown.cmd.reload.error": "§c[AutoShutdown] 错误：%s",
+  "auto_shutdown.cmd.status.header": "§6[AutoShutdown] 当前状态：",
+  "auto_shutdown.cmd.status.schedule": "§7- 定时关服：%s",
+  "auto_shutdown.cmd.status.voting": "§7- 玩家投票：%s",
+  "auto_shutdown.cmd.status.watchdog": "§7- 看门狗：%s",
+  "auto_shutdown.cmd.status.idle": "§7- 空闲关服：%s",
+  "auto_shutdown.cmd.status.idle_active": "§7  生效时段：%s - %s，超时：%s 分钟",
+  "auto_shutdown.cmd.status.enabled": "§a已启用",
+  "auto_shutdown.cmd.status.disabled": "§c已禁用"
 }

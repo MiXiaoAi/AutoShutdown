@@ -12,7 +12,18 @@
   "auto_shutdown.error.votebadsyntax": "*** Incorrect syntax; try '/shutdown yes' or '/shutdown no'",
   "auto_shutdown.error.playersonly": "*** Only players may use this command; try '/stop' instead",
   "auto_shutdown.error.nopermission": "*** You do not have permission to use the /shutdown command",
+  "auto_shutdown.error.votenotenabled": "§c[AutoShutdown] Voting is not enabled by the server administrator.",
   "auto_shutdown.msg.idleshutdown": "Server shutdown due to inactivity",
-  "auto_shutdown.cmd.reload.success": "Configuration reloaded successfully!",
-  "auto_shutdown.cmd.reload.failed": "Failed to reload configuration. Check server logs for details."
+  "auto_shutdown.cmd.reload.begin": "§e[AutoShutdown] Reloading configuration...",
+  "auto_shutdown.cmd.reload.success": "§a[AutoShutdown] Configuration reloaded successfully!",
+  "auto_shutdown.cmd.reload.failed": "§c[AutoShutdown] Failed to reload configuration. Check server logs for details.",
+  "auto_shutdown.cmd.reload.error": "§c[AutoShutdown] Error: %s",
+  "auto_shutdown.cmd.status.header": "§6[AutoShutdown] Current Status:",
+  "auto_shutdown.cmd.status.schedule": "§7- Schedule: %s",
+  "auto_shutdown.cmd.status.voting": "§7- Voting: %s",
+  "auto_shutdown.cmd.status.watchdog": "§7- Watchdog: %s",
+  "auto_shutdown.cmd.status.idle": "§7- Idle Shutdown: %s",
+  "auto_shutdown.cmd.status.idle_active": "§7  Active: %s - %s, Timeout: %s min",
+  "auto_shutdown.cmd.status.enabled": "§aEnabled",
+  "auto_shutdown.cmd.status.disabled": "§cDisabled"
 }

@@ -14,6 +14,7 @@ class Config
     private static final String IDLE_SHUTDOWN = "IdleShutdown";
     private static final String MESSAGES = "Messages";
 
+    static final ConfigVal<String> language = new ConfigVal<>("en_us");
     static final ConfigVal<Boolean> scheduleEnabled = new ConfigVal<>(true);
     static final ConfigVal<Boolean> scheduleWarning = new ConfigVal<>(true);
     static final ConfigVal<Integer> scheduleWarningCount = new ConfigVal<>(5);
