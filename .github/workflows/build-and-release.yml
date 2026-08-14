@@ -58,9 +58,9 @@ jobs:
     - name: Get build info
       id: build_info
       run: |
-        VERSION=$(grep "mod_version=" gradle.properties | cut -d'=' -f2)
-        FORGE_MC=$(grep "forge_mc_version=" gradle.properties | cut -d'=' -f2)
-        NEOFORGE_MC=$(grep "neoforge_mc_version=" gradle.properties | cut -d'=' -f2)
+        VERSION=$(grep "^mod_version=" gradle.properties | cut -d'=' -f2)
+        FORGE_MC=$(grep "^forge_mc_version=" gradle.properties | cut -d'=' -f2)
+        NEOFORGE_MC=$(grep "^neoforge_mc_version=" gradle.properties | cut -d'=' -f2)
         FORGE_JAR="auto_shutdown-$FORGE_MC-$VERSION-forge.jar"
         NEOFORGE_JAR="auto_shutdown-$NEOFORGE_MC-$VERSION-neoforge.jar"
         echo "version=$VERSION" >> $GITHUB_OUTPUT

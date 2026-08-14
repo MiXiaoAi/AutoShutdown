@@ -5,7 +5,6 @@
 [![NeoForge](https://img.shields.io/badge/NeoForge-21.1+-blue.svg)](https://neoforged.net/)
 [![Java](https://img.shields.io/badge/Java-17%2F21-blue.svg)](https://adoptium.net/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
-[![Build](https://github.com/MiXiaoAi/AutoShutdown/actions/workflows/ci.yml/badge.svg)](https://github.com/MiXiaoAi/AutoShutdown/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/MiXiaoAi/AutoShutdown)](https://github.com/MiXiaoAi/AutoShutdown/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/MiXiaoAi/AutoShutdown/total)](https://github.com/MiXiaoAi/AutoShutdown/releases)
 
